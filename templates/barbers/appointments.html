@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Appointments{% endblock %}
+
+{% block content %}
+<section class="appointments-list">
+    <div class="container">
+        <h1>Manage Appointments</h1>
+
+        <table class="appointments-table">
+            <thead>
+                <tr><th>Customer</th><th>Shop</th><th>Service</th><th>Date</th><th>Time</th><th>Status</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                {% for apt in appointments %}
+                <tr>
+                    <td>{{ apt.customer.user.get_full_name|default:apt.customer.user.email }}</td>
+                    <td>{{ apt.barber_shop.name }}</td>
+                    <td>{{ apt.service.name }} (₹{{ apt.service.price }})</td>
+                    <td>{{ apt.date|date:"M d, Y" }}</td>
+                    <td>{{ apt.start_time|time:"g:i A" }}</td>
+                    <td><span class="badge badge-{{ apt.status|lower }}">{{ apt.status }}</span></td>
+                    <td>
+                        {% if apt.status == 'PENDING' %}
+                        <form method="post" action="{% url 'appointments:accept' apt.pk %}" style="display:inline;">{% csrf_token %}<button type="submit" class="btn btn-sm">Accept</button></form>
+                        <form method="post" action="{% url 'appointments:reject' apt.pk %}" style="display:inline;">{% csrf_token %}<button type="submit" class="btn btn-sm btn-danger">Reject</button></form>
+                        {% elif apt.status == 'ACCEPTED' %}
+                        <form method="post" action="{% url 'appointments:complete' apt.pk %}" style="display:inline;">{% csrf_token %}<button type="submit" class="btn btn-sm">Complete</button></form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7">No appointments.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p class="refresh-hint">Page auto-refreshes every 30 seconds to show new bookings.</p>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-refresh every 30 seconds so new appointments booked from other devices appear
+setInterval(function() {
+    window.location.reload();
+}, 30000);
+</script>
+{% endblock %}

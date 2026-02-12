@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Services - {{ shop.name }}{% endblock %}
+
+{% block content %}
+<section class="services-section">
+    <div class="container">
+        <h1>{{ shop.name }} - Services</h1>
+        <a href="{% url 'barbers:service_add' shop.pk %}" class="btn btn-primary">+ Add Service</a>
+        <a href="{% url 'barbers:availability' shop.pk %}" class="btn btn-secondary">Set Availability</a>
+
+        <table class="services-table">
+            <thead>
+                <tr><th>Service</th><th>Price</th><th>Duration</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for s in services %}
+                <tr>
+                    <td>{{ s.name }}</td>
+                    <td>₹{{ s.price }}</td>
+                    <td>{{ s.duration_minutes }} mins</td>
+                    <td>
+                        <a href="{% url 'barbers:service_edit' shop.pk s.pk %}" class="btn btn-sm">Edit</a>
+                        <form method="post" action="{% url 'barbers:service_delete' shop.pk s.pk %}" style="display:inline;">{% csrf_token %}<button type="submit" class="btn btn-sm btn-danger">Delete</button></form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4">No services. <a href="{% url 'barbers:service_add' shop.pk %}">Add one</a></td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

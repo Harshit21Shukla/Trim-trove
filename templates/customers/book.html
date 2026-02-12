@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Book - {{ shop.name }}{% endblock %}
+
+{% block content %}
+<section class="book-section">
+    <div class="container">
+        <h1>Book Appointment at {{ shop.name }}</h1>
+
+        <form method="post" class="booking-form" id="bookingForm">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <div class="form-group">
+                <label>Service</label>
+                {{ form.service }}
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                {{ form.date }}
+                <span class="hint">Available: {{ min_date|date:"Y-m-d" }} to {{ max_date|date:"Y-m-d" }}</span>
+            </div>
+            <div class="form-group">
+                <label>Time</label>
+                {{ form.start_time }}
+                <span class="hint" id="slotHint">Select date first to see available slots</span>
+            </div>
+            <div class="form-group">
+                <label>Notes (optional)</label>
+                {{ form.notes }}
+            </div>
+            <button type="submit" class="btn btn-primary">Confirm Booking</button>
+        </form>
+    </div>
+</section>
+
+<script>
+// Optional: Fetch available slots via API and populate time dropdown
+document.addEventListener('DOMContentLoaded', function() {
+    const shopId = {{ shop.pk }};
+    const dateInput = document.querySelector('input[name="date"]');
+    const timeInput = document.querySelector('input[name="start_time"]');
+    const hint = document.getElementById('slotHint');
+
+    if (dateInput && timeInput) {
+        dateInput.addEventListener('change', function() {
+            const serviceSelect = document.querySelector('select[name="service"]');
+            const serviceId = serviceSelect ? serviceSelect.value : null;
+            if (serviceId && dateInput.value) {
+                fetch('/appointments/slots/?shop_id=' + shopId + '&service_id=' + serviceId + '&date=' + dateInput.value)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.slots && data.slots.length) {
+                            hint.textContent = data.slots.length + ' slots available: ' + data.slots.map(s => s.start).join(', ');
+                        } else {
+                            hint.textContent = 'No slots available for this date.';
+                        }
+                    })
+                    .catch(() => hint.textContent = 'Could not load slots.');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

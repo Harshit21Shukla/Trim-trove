@@ -1,0 +1,1 @@
+# TrimTrove - Main project package

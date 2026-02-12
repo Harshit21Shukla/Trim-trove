@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container hero-inner">
+        <h1>TrimTrove</h1>
+        <p class="tagline">Skip the wait. Book your haircut instantly.</p>
+        <p class="sub">No more 1–1.5 hour waits at barber shops across India.</p>
+        <div class="cta-buttons">
+            <a href="{% url 'auth:signup' %}" class="btn btn-primary">Get Started as Customer</a>
+            <a href="{% url 'auth:signup_barber' %}" class="btn btn-secondary">Register Your Salon</a>
+            <a href="{% url 'auth:login' %}" class="btn btn-outline">Login</a>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <h2>How It Works</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <span class="feature-icon">📍</span>
+                <h3>Find Nearby Shops</h3>
+                <p>Discover barber shops near you with real-time availability.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">⏱️</span>
+                <h3>Compare & Book</h3>
+                <p>Compare services, prices, durations, and ratings. Book instantly.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">✂️</span>
+                <h3>Walk In, No Wait</h3>
+                <p>Your slot is confirmed. Show up and get served on time.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

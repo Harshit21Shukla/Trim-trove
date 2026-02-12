@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TrimTrove{% endblock %} - No More Waiting</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header class="header">
+        <div class="container header-inner">
+            <a href="{% url 'landing' %}" class="logo">TrimTrove</a>
+            <nav class="nav">
+                {% if user.is_authenticated %}
+                    {% if user_profile %}
+                    {% if user_profile.role == 'CUSTOMER' %}
+                        <a href="{% url 'customers:dashboard' %}">Dashboard</a>
+                        <a href="{% url 'customers:shops' %}">Shops</a>
+                        <a href="{% url 'customers:appointments' %}">My Appointments</a>
+                    {% elif user_profile.role == 'BARBER' %}
+                        <a href="{% url 'barbers:dashboard' %}">Dashboard</a>
+                        <a href="{% url 'barbers:appointments' %}">Appointments</a>
+                    {% endif %}
+                    {% endif %}
+                    <a href="{% url 'auth:logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'auth:login' %}">Login</a>
+                    <a href="{% url 'auth:signup' %}">Sign Up</a>
+                    <a href="{% url 'auth:signup_barber' %}">Register as Barber</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        {% if messages %}
+        <div class="container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; TrimTrove - Eliminate barber shop wait times</p>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

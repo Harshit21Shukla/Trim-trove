@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Complete Signup{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-card">
+        <h1>Complete Your Profile</h1>
+        <p>Choose your role to continue:</p>
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.role }}
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                {{ form.phone }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Continue</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

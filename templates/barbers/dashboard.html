@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Barber Dashboard{% endblock %}
+
+{% block content %}
+<section class="barber-dashboard">
+    <div class="container">
+        <h1>Barber Dashboard</h1>
+
+        <div class="quick-actions">
+            <a href="{% url 'barbers:shop_create' %}" class="btn btn-primary">+ Add Barber Shop</a>
+        </div>
+
+        <div class="shops-grid">
+            {% for shop in shops %}
+            <div class="shop-card barber-shop">
+                <h3>{{ shop.name }}</h3>
+                <p>{{ shop.address }}</p>
+                <p>{{ shop.services.count }} service(s)</p>
+                <div class="shop-actions">
+                    <a href="{% url 'barbers:services' shop.pk %}" class="btn btn-sm">Services</a>
+                    <a href="{% url 'barbers:availability' shop.pk %}" class="btn btn-sm">Availability</a>
+                    <a href="{% url 'barbers:shop_edit' shop.pk %}" class="btn btn-sm">Edit</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No shops yet. <a href="{% url 'barbers:shop_create' %}">Create your first barber shop</a></p>
+            {% endfor %}
+        </div>
+
+        <h2>Upcoming Appointments</h2>
+        <div class="appointments-table-wrap">
+            <table class="appointments-table">
+                <thead>
+                    <tr><th>Customer</th><th>Shop</th><th>Service</th><th>Date</th><th>Time</th><th>Status</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                    {% for apt in appointments %}
+                    <tr>
+                        <td>{{ apt.customer.user.get_full_name|default:apt.customer.user.email }}</td>
+                        <td>{{ apt.barber_shop.name }}</td>
+                        <td>{{ apt.service.name }}</td>
+                        <td>{{ apt.date|date:"M d" }}</td>
+                        <td>{{ apt.start_time|time:"g:i A" }}</td>
+                        <td><span class="badge badge-{{ apt.status|lower }}">{{ apt.status }}</span></td>
+                        <td>
+                            {% if apt.status == 'PENDING' %}
+                            <form method="post" action="{% url 'appointments:accept' apt.pk %}" style="display:inline;">{% csrf_token %}<button type="submit" class="btn btn-sm">Accept</button></form>
+                            <form method="post" action="{% url 'appointments:reject' apt.pk %}" style="display:inline;">{% csrf_token %}<button type="submit" class="btn btn-sm btn-danger">Reject</button></form>
+                            {% elif apt.status == 'ACCEPTED' %}
+                            <form method="post" action="{% url 'appointments:complete' apt.pk %}" style="display:inline;">{% csrf_token %}<button type="submit" class="btn btn-sm">Complete</button></form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7">No upcoming appointments.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

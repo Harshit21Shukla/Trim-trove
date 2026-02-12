@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Barber Shops{% endblock %}
+
+{% block content %}
+<section class="shops-list">
+    <div class="container">
+        <h1>Barber Shops</h1>
+        <form method="get" class="search-form">
+            <input type="text" name="q" value="{{ query }}" placeholder="Search shops...">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <div class="shop-grid">
+            {% for shop in shops %}
+            <div class="shop-card">
+                {% if shop.image %}
+                <img src="{{ shop.image.url }}" alt="{{ shop.name }}" class="shop-image">
+                {% else %}
+                <div class="shop-image-placeholder">✂️</div>
+                {% endif %}
+                <div class="shop-info">
+                    <h3><a href="{% url 'customers:shop_detail' shop.pk %}">{{ shop.name }}</a></h3>
+                    <p class="address">{{ shop.address }}</p>
+                    <p class="rating">⭐ {{ shop.avg_rating }}</p>
+                    <a href="{% url 'customers:book' shop.pk %}" class="btn btn-primary btn-sm">Book</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No shops found.</p>
+            {% endfor %}
+        </div>
+        <p class="refresh-hint">Page auto-refreshes every 30 seconds to show newly added shops.</p>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-refresh every 30 seconds so new shops added from other devices appear
+setInterval(function() {
+    window.location.reload();
+}, 30000);
+</script>
+{% endblock %}

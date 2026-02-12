@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}My Appointments{% endblock %}
+
+{% block content %}
+<section class="appointments-list">
+    <div class="container">
+        <h1>My Appointments</h1>
+
+        <div class="appointments-table-wrap">
+            <table class="appointments-table">
+                <thead>
+                    <tr>
+                        <th>Shop</th>
+                        <th>Service</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for apt in appointments %}
+                    <tr class="status-{{ apt.status|lower }}">
+                        <td>{{ apt.barber_shop.name }}</td>
+                        <td>{{ apt.service.name }} (₹{{ apt.service.price }})</td>
+                        <td>{{ apt.date|date:"M d, Y" }}</td>
+                        <td>{{ apt.start_time|time:"g:i A" }}</td>
+                        <td><span class="badge badge-{{ apt.status|lower }}">{{ apt.status }}</span></td>
+                        <td>
+                            {% if apt.status == 'PENDING' or apt.status == 'ACCEPTED' %}
+                            <form method="post" action="{% url 'appointments:cancel' apt.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6">No appointments yet. <a href="{% url 'customers:shops' %}">Find a shop</a></td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if shop %}Edit{% else %}Add{% endif %} Barber Shop{% endblock %}
+
+{% block content %}
+<section class="form-section">
+    <div class="container">
+        <h1>{% if shop %}Edit{% else %}Add{% endif %} Barber Shop</h1>
+        <form method="post" enctype="multipart/form-data" class="auth-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

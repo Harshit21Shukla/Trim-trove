@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <h1>Find Barber Shops Near You</h1>
+        <p class="subtitle">Compare services, prices, and book instantly.</p>
+
+        <div class="shop-grid">
+            {% for shop in shops %}
+            <div class="shop-card">
+                {% if shop.image %}
+                <img src="{{ shop.image.url }}" alt="{{ shop.name }}" class="shop-image">
+                {% else %}
+                <div class="shop-image-placeholder">✂️</div>
+                {% endif %}
+                <div class="shop-info">
+                    <h3><a href="{% url 'customers:shop_detail' shop.pk %}">{{ shop.name }}</a></h3>
+                    <p class="address">{{ shop.address }}</p>
+                    <p class="rating">⭐ {{ shop.avg_rating }}</p>
+                    <p class="services-count">{{ shop.services.count }} service(s)</p>
+                    <a href="{% url 'customers:book' shop.pk %}" class="btn btn-primary btn-sm">Book Now</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No barber shops found. Check back later!</p>
+            {% endfor %}
+        </div>
+        <p class="refresh-hint">Page auto-refreshes every 30 seconds to show newly added shops.</p>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-refresh every 30 seconds so new shops added from other devices appear
+setInterval(function() {
+    window.location.reload();
+}, 30000);
+</script>
+{% endblock %}

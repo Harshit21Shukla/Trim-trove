@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ shop.name }}{% endblock %}
+
+{% block content %}
+<section class="shop-detail">
+    <div class="container">
+        <div class="shop-header">
+            {% if shop.image %}
+            <img src="{{ shop.image.url }}" alt="{{ shop.name }}" class="shop-detail-image">
+            {% else %}
+            <div class="shop-image-placeholder large">✂️</div>
+            {% endif %}
+            <div>
+                <h1>{{ shop.name }}</h1>
+                <p class="address">{{ shop.address }}</p>
+                <p class="rating">⭐ {{ shop.avg_rating }}</p>
+                {% if shop.phone %}<p>📞 {{ shop.phone }}</p>{% endif %}
+                <a href="{% url 'customers:book' shop.pk %}" class="btn btn-primary">Book Appointment</a>
+            </div>
+        </div>
+
+        {% if shop.description %}
+        <div class="shop-description">
+            <h2>About</h2>
+            <p>{{ shop.description }}</p>
+        </div>
+        {% endif %}
+
+        <div class="services-section">
+            <h2>Services & Pricing</h2>
+            <table class="services-table">
+                <thead>
+                    <tr><th>Service</th><th>Price</th><th>Duration</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for s in shop.services.all %}
+                    <tr>
+                        <td>{{ s.name }}</td>
+                        <td>₹{{ s.price }}</td>
+                        <td>{{ s.duration_minutes }} mins</td>
+                        <td><a href="{% url 'customers:book' shop.pk %}?service={{ s.pk }}" class="btn btn-sm">Book</a></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4">No services listed.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}
